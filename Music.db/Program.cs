@@ -6,8 +6,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-//New => Add services: SQL server and Connection string
-builder.Services.AddDbContext<MusicdbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("LocalDbConnection")));
+var connectionString = builder.Configuration.GetConnectionString("LocalDbConnection");
+builder.Services.AddDbContext<MusicdbContext>(options => options.UseSqlServer(connectionString));
 
 var app = builder.Build();
 
