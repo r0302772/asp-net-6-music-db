@@ -6,8 +6,8 @@
         public string Title { get; set; }
 
         //Navigation Props
-        //public int GenreId { get; set; }
-        //public Genre Genre { get; set; }
-        //public virtual ICollection<SongArtist> SongArtists { get; set; }
+        public int GenreId { get; set; }
+        public Genre Genre { get; set; }
+        public virtual ICollection<SongArtist> SongArtists { get; set; }
     }
 }

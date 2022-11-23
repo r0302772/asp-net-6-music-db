@@ -6,6 +6,6 @@
         public string Name { get; set; }
 
         //Navigation Props
-        //public ICollection<Song> Songs { get; set; }
+        public ICollection<Song> Songs { get; set; }
     }
 }
