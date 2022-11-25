@@ -10,29 +10,49 @@ namespace Music.db.Data
 
 
         //DbSets that contain data
-        public DbSet<Artist> Artists { get; set; }
+        //public DbSet<Artist> Artists { get; set; }
         public DbSet<Genre> Genres { get; set; }
         public DbSet<Song> Songs { get; set; }
-        public DbSet<SongArtist> SongArtists { get; set; }
+        //public DbSet<SongArtist> SongArtists { get; set; }
 
 
         //OnModelCreating methode that provides a translation to the database
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Artist>()
-                .ToTable(nameof(Artist))
-                .Property(a => a.Name).IsRequired();
+            //modelBuilder.Entity<Artist>()
+            //    .ToTable(nameof(Artist))
+            //    .Property(a => a.Name).IsRequired();
 
-            modelBuilder.Entity<Genre>()
-                .ToTable(nameof(Genre))
-                .Property(g => g.Name).IsRequired();
+            #region Genre
 
+            modelBuilder.Entity<Genre>().ToTable(nameof(Genre));
+            modelBuilder.Entity<Genre>().HasKey(g => g.Id);
+            modelBuilder.Entity<Genre>().Property(g => g.Name).IsRequired();
+
+            #endregion
+
+            #region Song
+
+            modelBuilder.Entity<Song>().ToTable(nameof(Song));
+            modelBuilder.Entity<Song>().HasKey(s => s.Id);
+            modelBuilder.Entity<Song>().Property(s => s.Title).IsRequired();
+
+            #endregion
+
+            //modelBuilder.Entity<SongArtist>()
+            //    .ToTable(nameof(SongArtist));
+
+            #region Relations
+
+            #region Song to Genre
             modelBuilder.Entity<Song>()
-                .ToTable(nameof(Song))
-                .Property(s => s.Title).IsRequired();
+                .HasOne(s => s.Genre)
+                .WithMany(g => g.Songs)
+                .HasForeignKey(s => s.GenreId)
+                .HasConstraintName("FK_GenreId");
+            #endregion
 
-
-            modelBuilder.Entity<SongArtist>().ToTable(nameof(SongArtist));
+            #endregion
         }
     }
 }

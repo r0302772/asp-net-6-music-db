@@ -1,4 +1,6 @@
-﻿namespace Music.db.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Music.db.Models
 {
     public class Song
     {
@@ -8,6 +10,6 @@
         //Navigation Props
         public int GenreId { get; set; }
         public Genre Genre { get; set; }
-        public virtual ICollection<SongArtist> SongArtists { get; set; }
+        //public virtual ICollection<Artist> Artists { get; set; }
     }
 }
