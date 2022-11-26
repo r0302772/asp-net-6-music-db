@@ -14,19 +14,20 @@ namespace Music.db.Controllers
 		{
 			_context = context;
 		}
-		public IActionResult Index()
-		{
-			return View();
-		}
-
-		#region Create
-		public async Task<IActionResult> Create()
+		public async Task<IActionResult> Index()
 		{
 			CreateSongViewModel viewModel = new CreateSongViewModel()
 			{
 				Genres = new SelectList(await _context.Genres.OrderBy(x => x.Name).ToListAsync(), "Id", "Name")
 			};
+
 			return View(viewModel);
+		}
+
+		#region Create
+		public IActionResult Create()
+		{
+			return PartialView();
 		}
 
 		[HttpPost]
@@ -49,7 +50,7 @@ namespace Music.db.Controllers
 
 			viewModel.Genres = new SelectList(await _context.Genres.OrderBy(x => x.Name).ToListAsync(), "Id", "Name");
 
-			return View(viewModel);
+			return View(nameof(Index));
 		}
 		#endregion
 
