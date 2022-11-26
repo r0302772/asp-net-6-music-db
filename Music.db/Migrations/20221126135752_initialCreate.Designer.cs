@@ -11,7 +11,7 @@ using Music.db.Data;
 namespace Music.db.Migrations
 {
     [DbContext(typeof(MusicdbContext))]
-    [Migration("20221125094228_initialCreate")]
+    [Migration("20221126135752_initialCreate")]
     partial class initialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -68,8 +68,7 @@ namespace Music.db.Migrations
                         .WithMany("Songs")
                         .HasForeignKey("GenreId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_GenreId");
+                        .IsRequired();
 
                     b.Navigation("Genre");
                 });

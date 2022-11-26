@@ -48,8 +48,7 @@ namespace Music.db.Data
             modelBuilder.Entity<Song>()
                 .HasOne(s => s.Genre)
                 .WithMany(g => g.Songs)
-                .HasForeignKey(s => s.GenreId)
-                .HasConstraintName("FK_GenreId");
+                .HasForeignKey(s => s.GenreId);
             #endregion
 
             #endregion
