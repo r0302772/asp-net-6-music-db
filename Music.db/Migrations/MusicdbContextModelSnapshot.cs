@@ -66,8 +66,7 @@ namespace Music.db.Migrations
                         .WithMany("Songs")
                         .HasForeignKey("GenreId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_GenreId");
+                        .IsRequired();
 
                     b.Navigation("Genre");
                 });

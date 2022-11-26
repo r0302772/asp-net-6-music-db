@@ -34,7 +34,7 @@ namespace Music.db.Migrations
                 {
                     table.PrimaryKey("PK_Song", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_GenreId",
+                        name: "FK_Song_Genre_GenreId",
                         column: x => x.GenreId,
                         principalTable: "Genre",
                         principalColumn: "Id",

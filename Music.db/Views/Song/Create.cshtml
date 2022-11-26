@@ -1,0 +1,43 @@
+﻿@model Music.db.ViewModels.Song.CreateSongViewModel
+
+@{
+	ViewData["Title"] = "Create a Song";
+}
+<div class="row pt-5">
+	<h2>Create a Song</h2>
+
+	<hr>
+
+	<form asp-action="Create">
+		<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+		<div class="row pb-1">
+			<div class="col-md-6">
+				<div class="input-group mb-2">
+					<span class="input-group-text"><label asp-for="Title" class="control-label "></label></span>
+					<input asp-for="Title" class="form-control">
+				</div>
+				<div class="pb-2">
+					<span asp-validation-for="Title" class="text-danger"></span>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="input-group mb-2">
+					<span class="input-group-text">
+						<label asp-for="GenreId" class="control-label"></label>
+					</span>
+					<select asp-for="GenreId" asp-items="Model.Genres" class="form-control"></select>
+				</div>
+				<div class="pb-2">
+					<span asp-validation-for="GenreId" class="text-danger"></span>
+					<span asp-validation-for="Genres" class="text-danger"></span>
+				</div>
+			</div>
+		</div>
+		<div class="row py-1">
+			<div class="col-md-6">
+				<input type="submit" value="Create" class="btn btn-primary" />
+				<a asp-controller="Song" asp-action="Index" value="" class="btn btn-danger m-1">Cancel</a>
+			</div>
+		</div>
+	</form>
+</div>
