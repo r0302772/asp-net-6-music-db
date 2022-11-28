@@ -7,58 +7,58 @@ using Music.db.ViewModels.Song;
 
 namespace Music.db.Controllers
 {
-	public class SongController : Controller
-	{
-		private readonly MusicdbContext _context;
-		public SongController(MusicdbContext context)
-		{
-			_context = context;
-		}
-		public async Task<IActionResult> Index()
-		{
-			CreateSongViewModel viewModel = new CreateSongViewModel()
-			{
-				Genres = new SelectList(await _context.Genres.OrderBy(x => x.Name).ToListAsync(), "Id", "Name")
-			};
+    public class SongController : Controller
+    {
+        private readonly MusicdbContext _context;
+        public SongController(MusicdbContext context)
+        {
+            _context = context;
+        }
+        public async Task<IActionResult> Index()
+        {
+            CreateSongViewModel viewModel = new CreateSongViewModel()
+            {
+                Genres = new SelectList(await _context.Genres.OrderBy(x => x.Name).ToListAsync(), "Id", "Name")
+            };
 
-			return View(viewModel);
-		}
+            return View(viewModel);
+        }
 
-		#region Create
-		public IActionResult Create()
-		{
-			return PartialView();
-		}
+        #region Create
+        //public IActionResult Create()
+        //{
+        //    return PartialView();
+        //}
 
-		[HttpPost]
-		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Create(CreateSongViewModel viewModel)
-		{
-			if (ModelState.IsValid)
-			{
-				Song song = new Song()
-				{
-					Title = viewModel.Title,
-					GenreId = viewModel.GenreId,
-				};
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(CreateSongViewModel viewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                Song song = new Song()
+                {
+                    Title = viewModel.Title,
+                    GenreId = viewModel.GenreId,
+                };
 
-				_context.Add(song);
-				await _context.SaveChangesAsync();
+                _context.Add(song);
+                await _context.SaveChangesAsync();
 
-				return RedirectToAction(nameof(List));
-			}
+                return RedirectToAction(nameof(List));
+            }
 
-			viewModel.Genres = new SelectList(await _context.Genres.OrderBy(x => x.Name).ToListAsync(), "Id", "Name");
+            viewModel.Genres = new SelectList(await _context.Genres.OrderBy(x => x.Name).ToListAsync(), "Id", "Name");
 
-			return View(nameof(Index));
-		}
-		#endregion
+            return View(nameof(Index));
+        }
+        #endregion
 
-		public IActionResult List()
-		{
-			var songs = _context.Songs.Include(x => x.Genre).ToList();
+        public async Task<IActionResult> List()
+        {
+            var songs = await _context.Songs.Include(x => x.Genre).ToListAsync();
 
-			return View(songs);
-		}
-	}
+            return View(songs);
+        }
+    }
 }
