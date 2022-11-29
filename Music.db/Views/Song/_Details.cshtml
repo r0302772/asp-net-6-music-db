@@ -1,0 +1,19 @@
+﻿@model Music.db.ViewModels.Song.SongListViewModel
+
+<div class="row pb-1">
+	<div class="input-group mb-2">
+		<span class="input-group-text"><label asp-for="Title" class="control-label "></label></span>
+		<input asp-for="Title" class="form-control" disabled>
+	</div>
+	<div class="pb-2">
+		<span asp-validation-for="Title" class="text-danger"></span>
+	</div>
+
+	<div class="input-group mb-2">
+		<span class="input-group-text"><label asp-for="GenreId"></label></span>
+		<input type="text" class="form-control" value="@Model.GenreName" disabled>
+	</div>
+	<div class="pb-2">
+		<span asp-validation-for="GenreId" class="text-danger"></span>
+	</div>
+</div>

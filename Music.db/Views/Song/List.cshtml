@@ -1,38 +1,74 @@
-﻿@model List<Song>
+﻿@model Music.db.ViewModels.Song.SongListViewModel
 @{
-    ViewData["Title"] = "Songs";
+	ViewData["Title"] = "Songs";
 }
 
 <h1 class="text-center display-3">Songs</h1>
 
+<div class="modal-dialog modal-dialog-centered fade show" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title fs-5" id="deleteModalLabel">Delete song: @Model.Title</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+				<form class="modal-body" asp-action="Delete">
+					<input type="hidden" asp-for="SongId" />
+					<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+					<div class="row pb-1">
+						Are you sure you want to delete: @Model.Title?
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+						<button type="submit" class="btn btn-primary">Delete</button>
+					</div>
+				</form>
+		</div>
+	</div>
+</div>
+<div>
+	<partial name="../Song/_Details" />
+</div>
+
 <table class="table table-hover">
-    <thead>
-        <tr>
-            <th scope="col">
-                ID
-            </th>
-            <th scope="col">
-                Title
-            </th>
-            <th scope="col">
-                Genre
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var song in Model)
-        {
-            <tr>
-                <td>
-                    @song.Id
-                </td>
-                <td>
-                    @song.Title
-                </td>
-                <td>
-                    @song.Genre.Name
-                </td>
-            </tr>
-        }
-    </tbody>
+	<thead>
+		<tr>
+			<th scope="col">
+				ID
+			</th>
+			<th scope="col">
+				Title
+			</th>
+			<th scope="col">
+				Genre
+			</th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var song in Model.Songs)
+		{
+			<tr>
+				<td>
+					@song.Id
+				</td>
+				<td>
+					<a asp-controller="Song" asp-action="Details" asp-route-id="@song.Id">@song.Title</a>
+				</td>
+				<td>
+					@song.Genre.Name
+				</td>
+				<td>
+					<a class="text-danger" asp-action="Delete" asp-route-id="@song.Id"><i class="bi bi-x-lg"></i></a>
+				</td>
+			</tr>
+		}
+	</tbody>
 </table>
+
+
+@section Scripts {
+	@{
+		<partial name="_ValidationScriptsPartial" />
+	}
+}

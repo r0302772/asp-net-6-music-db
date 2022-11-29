@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Music.db.Models;
 
 namespace Music.db.ViewModels.Song
 {
@@ -6,6 +7,6 @@ namespace Music.db.ViewModels.Song
 	{
 		public string Title { get; set; }
 		public int GenreId { get; set; }
-		public SelectList? Genres { get; set; }//Setting this prop as nullable works but is not the right solution?
+        public SelectList? Genres { get; set; }//Setting this prop as nullable works but is not the right solution?
 	}
 }
