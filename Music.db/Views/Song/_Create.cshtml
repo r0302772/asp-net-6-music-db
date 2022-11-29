@@ -1,0 +1,43 @@
+﻿@model Music.db.ViewModels.Song.CreateSongViewModel
+
+<button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#createSongoffcanvas" aria-controls="createSongoffcanvas">
+	Create
+</button>
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="createSongoffcanvas" aria-labelledby="offcanvasRightLabel">
+	<div class="offcanvas-header">
+		<h5 class="offcanvas-title" id="offcanvasRightLabel">Create a Song</h5>
+		<button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+	</div>
+	<div class="offcanvas-body">
+		<form asp-action="Create">
+			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+			<div class="row pb-1">
+				<div class="input-group mb-2">
+					<span class="input-group-text"><label asp-for="Title" class="control-label "></label></span>
+					<input asp-for="Title" class="form-control">
+				</div>
+				<div class="pb-2">
+					<span asp-validation-for="Title" class="text-danger"></span>
+				</div>
+
+				<div class="input-group mb-2">
+					<span class="input-group-text">
+						<label asp-for="GenreId" class="control-label"></label>
+					</span>
+					<select asp-for="GenreId" asp-items="Model.Genres" class="form-control">
+						<option selected disabled>Select a genre</option>
+					</select>
+				</div>
+				<div class="pb-2">
+					<span asp-validation-for="GenreId" class="text-danger"></span>
+				</div>
+			</div>
+
+			<hr />
+
+			<button type="button" class="btn btn-secondary" data-bs-dismiss="offcanvas">Cancel</button>
+			<button type="submit" class="btn btn-primary">Create</button>
+		</form>
+	</div>
+</div>
