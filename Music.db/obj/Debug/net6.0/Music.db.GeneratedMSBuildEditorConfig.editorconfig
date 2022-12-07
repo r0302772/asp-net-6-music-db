@@ -24,12 +24,24 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcR2VucmVcQ3JlYXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/Dennis Nijs/Desktop/My Projects/Music.db/Music.db/Music.db/Views/Genre/Delete.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcR2VucmVcRGVsZXRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Dennis Nijs/Desktop/My Projects/Music.db/Music.db/Music.db/Views/Genre/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcR2VucmVcRGV0YWlscy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/Dennis Nijs/Desktop/My Projects/Music.db/Music.db/Music.db/Views/Genre/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcR2VucmVcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Dennis Nijs/Desktop/My Projects/Music.db/Music.db/Music.db/Views/Genre/List.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcR2VucmVcTGlzdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Dennis Nijs/Desktop/My Projects/Music.db/Music.db/Music.db/Views/Genre/Update.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcR2VucmVcVXBkYXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Dennis Nijs/Desktop/My Projects/Music.db/Music.db/Music.db/Views/Home/Index.cshtml]

@@ -64,35 +64,6 @@ namespace Music.db.Controllers
 		}
 		#endregion
 
-		#region Details
-
-		public async Task<IActionResult> Details(int? id)
-		{
-			if (id == null) return NotFound();
-
-			var song = await _context.Songs.Include(x => x.Genre).Where(x => x.Id == id).FirstOrDefaultAsync();
-
-			if (song != null)
-			{
-				SongDetailsViewModel viewModel = new SongDetailsViewModel()
-				{
-					Title = song.Title,
-					GenreId = song.GenreId,
-				};
-				return View(nameof(Details), viewModel);
-			}
-			else
-			{
-				SongListViewModel viewModel = new SongListViewModel()
-				{
-					Songs = _context.Songs.ToList()
-				};
-				return View(nameof(List), viewModel);
-			}
-		}
-
-		#endregion
-
 		#region Delete
 		public async Task<IActionResult> Delete(int? id)
 		{
@@ -101,8 +72,6 @@ namespace Music.db.Controllers
 			var song = await _context.Songs.FirstOrDefaultAsync(x => x.Id == id);
 
 			if (song == null) return NotFound();
-
-			var songs = await _context.Songs.Include(x => x.Genre).ToListAsync();
 
 			DeleteSongViewModel viewModel = new DeleteSongViewModel()
 			{
@@ -133,6 +102,35 @@ namespace Music.db.Controllers
 				Songs = await _context.Songs.Include(x => x.Genre).ToListAsync()
 			};
 			return View(nameof(List), viewModel);
+		}
+
+		#endregion
+
+		#region Details
+
+		public async Task<IActionResult> Details(int? id)
+		{
+			if (id == null) return NotFound();
+
+			var song = await _context.Songs.Include(x => x.Genre).Where(x => x.Id == id).FirstOrDefaultAsync();
+
+			if (song != null)
+			{
+				SongDetailsViewModel viewModel = new SongDetailsViewModel()
+				{
+					Title = song.Title,
+					GenreId = song.GenreId,
+				};
+				return View(nameof(Details), viewModel);
+			}
+			else
+			{
+				SongListViewModel viewModel = new SongListViewModel()
+				{
+					Songs = _context.Songs.ToList()
+				};
+				return View(nameof(List), viewModel);
+			}
 		}
 
 		#endregion
