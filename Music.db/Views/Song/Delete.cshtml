@@ -1,23 +1,21 @@
 ﻿@model Music.db.ViewModels.Song.DeleteSongViewModel
 
-<div>
-	<div class="modal-header">
-		<h5 class="modal-title" id="deleteModalLabel">Delete song: @Model.Title</h5>
-		<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-	</div>
-	<div class="modal-body">
-		<form asp-action="Delete">
-			<input type="hidden" asp-for="SongId" />
-			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
-			<div class="row pb-1">
-				Are you sure you want to delete: @Model.Title?
-			</div>
+@{
+	ViewData["Title"] = $"Delete {Model.Title}";
+}
 
-			<hr />
-			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-bs-dismiss="offcanvas">Cancel</button>
-				<button type="submit" class="btn btn-primary">Delete</button>
-			</div>
-		</form>
-	</div>
+<div>
+	<h5>Delete song: @Model.Title</h5>
+</div>
+<div>
+	<form asp-action="Delete">
+		<input type="hidden" asp-for="SongId" />
+		<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+		<div class="row pb-1">
+			Are you sure you want to delete: @Model.Title?
+		</div>
+
+		<a class="btn btn-secondary" asp-controller="Song" asp-action="List">Cancel</a>
+		<button type="submit" class="btn btn-primary">Delete</button>
+	</form>
 </div>

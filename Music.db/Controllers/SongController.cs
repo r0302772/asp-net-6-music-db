@@ -14,6 +14,9 @@ namespace Music.db.Controllers
 		{
 			_context = context;
 		}
+
+		#region Index
+
 		public async Task<IActionResult> Index()
 		{
 			CreateSongViewModel viewModel = new CreateSongViewModel()
@@ -24,11 +27,18 @@ namespace Music.db.Controllers
 			return View(viewModel);
 		}
 
+		#endregion
+
 		#region Create
-		//public IActionResult Create()
-		//{
-		//    return PartialView();
-		//}
+		public IActionResult Create()
+		{
+			CreateSongViewModel viewModel = new CreateSongViewModel()
+			{
+				Genres = new SelectList(_context.Genres.OrderBy(x => x.Name).ToList(), "Id", "Name")
+			};
+
+			return View(viewModel);
+		}
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
@@ -58,22 +68,18 @@ namespace Music.db.Controllers
 
 		public async Task<IActionResult> Details(int? id)
 		{
-			if (id == null)
-			{
-				return NotFound();
-			}
+			if (id == null) return NotFound();
 
-			var song = _context.Songs.Include(x => x.Genre).Where(x => x.Id == id).FirstOrDefault();
+			var song = await _context.Songs.Include(x => x.Genre).Where(x => x.Id == id).FirstOrDefaultAsync();
 
 			if (song != null)
 			{
-				SongListViewModel viewModel = new SongListViewModel()
+				SongDetailsViewModel viewModel = new SongDetailsViewModel()
 				{
 					Title = song.Title,
-					GenreName = song.Genre.Name,
-					Songs = await _context.Songs.Include(x => x.Genre).ToListAsync()
+					GenreId = song.GenreId,
 				};
-				return View(nameof(List), viewModel);
+				return View(nameof(Details), viewModel);
 			}
 			else
 			{
@@ -90,29 +96,21 @@ namespace Music.db.Controllers
 		#region Delete
 		public async Task<IActionResult> Delete(int? id)
 		{
-			if (id == null)
-			{
-				return NotFound();
-			}
+			if (id == null) return NotFound();
 
 			var song = await _context.Songs.FirstOrDefaultAsync(x => x.Id == id);
-			if (song == null)
-			{
-				return NotFound();
-			}
+
+			if (song == null) return NotFound();
 
 			var songs = await _context.Songs.Include(x => x.Genre).ToListAsync();
 
-			SongListViewModel viewModel = new SongListViewModel()
+			DeleteSongViewModel viewModel = new DeleteSongViewModel()
 			{
 				SongId = song.Id,
 				Title = song.Title,
-				Songs = songs
 			};
 
-			ViewBag["block"] = "block";
-
-			return View(nameof(List),viewModel);
+			return View(nameof(Delete), viewModel);
 		}
 
 
@@ -120,17 +118,11 @@ namespace Music.db.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> DeleteConfirmed(int? id)
 		{
-			if (id == null)
-			{
-				return NotFound();
-			}
+			if (id == null) return NotFound();
 
 			var song = await _context.Songs.FindAsync(id);
 
-			if (song == null)
-			{
-				return NotFound();
-			}
+			if (song == null) return NotFound();
 
 			_context.Songs.Remove(song);
 
@@ -145,6 +137,8 @@ namespace Music.db.Controllers
 
 		#endregion
 
+		#region List
+
 		public async Task<IActionResult> List()
 		{
 			SongListViewModel viewModel = new SongListViewModel()
@@ -154,5 +148,71 @@ namespace Music.db.Controllers
 
 			return View(viewModel);
 		}
+
+		#endregion
+
+		#region Update
+
+		public async Task<IActionResult> Update(int? id)
+		{
+			if (id == null) return NotFound();
+
+			var song = await _context.Songs.FindAsync(id);
+
+			if (song == null) return NotFound();
+
+			UpdateSongViewModel viewModel = new UpdateSongViewModel()
+			{
+				SongId = song.Id,
+				Title = song.Title,
+				GenreId= song.GenreId,
+
+				Genres = new SelectList(await _context.Genres.OrderBy(x => x.Name).ToListAsync(), "Id", "Name", song.GenreId),
+			};
+
+			return View(viewModel);
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> Update(int id, UpdateSongViewModel viewModel)
+		{
+			if (id != viewModel.SongId) return NotFound();
+
+			if (ModelState.IsValid)
+			{
+				try
+				{
+					Song song = new Song()
+					{
+						Id = viewModel.SongId,
+						Title = viewModel.Title,
+						GenreId = viewModel.GenreId,
+					};
+
+					_context.Update(song);
+					await _context.SaveChangesAsync();
+
+				}
+				catch (DbUpdateConcurrencyException)
+				{
+					if (!_context.Songs.Any(x => x.Id == viewModel.SongId))
+					{
+						return NotFound();
+					}
+					else
+					{
+						throw;
+					}
+				}
+				return RedirectToAction(nameof(Index));
+			}
+
+			viewModel.Genres = new SelectList(await _context.Genres.OrderBy(x => x.Name).ToListAsync(), "Id", "Name", viewModel.GenreId);
+
+			return View(viewModel);
+		}
+
+		#endregion
 	}
 }

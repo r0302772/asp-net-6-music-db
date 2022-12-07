@@ -1,5 +1,9 @@
 ﻿@model Music.db.ViewModels.Song.SongDetailsViewModel
 
+@{
+	ViewData["Title"] = $"Details {Model.Title}";
+}
+
 <div class="row pb-1">
 	<div class="input-group mb-2">
 		<span class="input-group-text"><label asp-for="Title" class="control-label "></label></span>

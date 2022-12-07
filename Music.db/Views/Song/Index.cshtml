@@ -1,13 +1,17 @@
 ﻿@{
-    ViewData["Title"] = "Song";
+	ViewData["Title"] = "Song";
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome at the song index</h1>
-        <a class="btn btn-primary" asp-area="" asp-controller="Song" asp-action="List">List</a>
+	<h1 class="display-4">Welcome at the song index</h1>
 </div>
+
 <div>
-	<partial name="../Song/_Create"/>
+	<a class="btn btn-primary" asp-area="" asp-controller="Song" asp-action="List">List</a>
+</div>
+
+<div>
+	<partial name="../Song/_Create" />
 </div>
 
 @section Scripts {
