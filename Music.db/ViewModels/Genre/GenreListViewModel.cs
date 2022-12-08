@@ -4,6 +4,6 @@
     public class GenreListViewModel
     {
         public string GenreSearch { get; set; }
-        public List<Genre> Genres { get; set; }
+        public IEnumerable<Genre> Genres { get; set; }
     }
 }

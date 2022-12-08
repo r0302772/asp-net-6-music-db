@@ -1,20 +1,19 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Music.db.Data;
+using Music.db.Data.UnitOfWork;
 using Music.db.Models;
 using Music.db.ViewModels.Genre;
-using Music.db.ViewModels.Song;
 
 namespace Music.db.Controllers
 {
 	public class GenreController : Controller
 	{
-		private readonly MusicdbContext _context;
-		public GenreController(MusicdbContext context)
+		private readonly IUnitOfWork _uow;
+		public GenreController(IUnitOfWork uow)
 		{
-			_context = context;
+			_uow = uow;
 		}
+
 		#region Index
 
 		public IActionResult Index()
@@ -36,12 +35,12 @@ namespace Music.db.Controllers
 		{
 			if (ModelState.IsValid)
 			{
-				_context.Add(new Genre()
+				_uow.GenreRepository.Create(new Genre()
 				{
 					Name = viewModel.Name,
 				});
 
-				await _context.SaveChangesAsync();
+				await _uow.Save();
 
 				return RedirectToAction(nameof(List));
 			}
@@ -54,9 +53,9 @@ namespace Music.db.Controllers
 
 		public async Task<IActionResult> Delete(int? id)
 		{
-			if (id == null) return NotFound();
+			Genre genre = await _uow.GenreRepository.GetById(id);
 
-			var genre = await _context.Genres.FirstOrDefaultAsync(x => x.Id == id);
+			if (id == null) return NotFound();
 
 			if (genre == null) return NotFound();
 
@@ -74,19 +73,19 @@ namespace Music.db.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> DeleteConfirmed(int? id)
 		{
-			if (id == null) return NotFound();
+			Genre genre = await _uow.GenreRepository.GetById(id);
 
-			var genre = await _context.Genres.FindAsync(id);
+			if (id == null) return NotFound();
 
 			if (genre == null) return NotFound();
 
-			_context.Genres.Remove(genre);
+			_uow.GenreRepository.Delete(genre);
 
-			await _context.SaveChangesAsync();
+			await _uow.Save();
 
 			GenreListViewModel viewModel = new GenreListViewModel()
 			{
-				Genres = await _context.Genres.ToListAsync()
+				Genres = await _uow.GenreRepository.GetAll().ToListAsync()
 			};
 			return View(nameof(List), viewModel);
 		}
@@ -97,25 +96,31 @@ namespace Music.db.Controllers
 
 		public async Task<IActionResult> Details(int? id)
 		{
-			if (id == null) return NotFound();
+			Genre genre = await _uow.GenreRepository.GetById(id);
 
-			var genre = await _context.Genres.Where(x => x.Id == id).FirstOrDefaultAsync();
-			var songs = await _context.Songs.Where(x => x.GenreId == id).ToListAsync();
+			if (id == null) return NotFound();
 
 			if (genre != null)
 			{
+				IEnumerable<Song> songs = 
+					await _uow.SongRepository
+					.GetAll()
+					.Where(x => x.GenreId == id)
+					.ToListAsync();
+
 				GenreDetailsViewModel viewModel = new GenreDetailsViewModel()
 				{
 					Name = genre.Name,
 					Songs = songs,
 				};
+
 				return View(nameof(Details), viewModel);
 			}
 			else
 			{
 				GenreListViewModel viewModel = new GenreListViewModel()
 				{
-					Genres = _context.Genres.ToList()
+					Genres = await _uow.GenreRepository.GetAll().ToListAsync()
 				};
 				return View(nameof(List), viewModel);
 			}
@@ -129,7 +134,7 @@ namespace Music.db.Controllers
 		{
 			GenreListViewModel viewModel = new GenreListViewModel()
 			{
-				Genres = await _context.Genres.ToListAsync()
+				Genres = await _uow.GenreRepository.GetAll().ToListAsync()
 			};
 
 			return View(viewModel);
@@ -141,9 +146,9 @@ namespace Music.db.Controllers
 
 		public async Task<IActionResult> Update(int? id)
 		{
-			if (id == null) return NotFound();
+			Genre genre = await _uow.GenreRepository.GetById(id);
 
-			var genre = await _context.Genres.FindAsync(id);
+			if (id == null) return NotFound();
 
 			if (genre == null) return NotFound();
 
@@ -172,13 +177,13 @@ namespace Music.db.Controllers
 						Name = viewModel.Name,
 					};
 
-					_context.Update(genre);
-					await _context.SaveChangesAsync();
+					_uow.GenreRepository.Update(genre);
+					await _uow.Save();
 
 				}
 				catch (DbUpdateConcurrencyException)
 				{
-					if (!_context.Genres.Any(x => x.Id == viewModel.GenreId))
+					if (!_uow.GenreRepository.GetAll().Any(x => x.Id == viewModel.GenreId))
 					{
 						return NotFound();
 					}
@@ -187,7 +192,7 @@ namespace Music.db.Controllers
 						throw;
 					}
 				}
-				return RedirectToAction(nameof(Index));
+				return RedirectToAction(nameof(List));
 			}
 
 			return View(viewModel);

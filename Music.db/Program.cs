@@ -1,17 +1,27 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using Music.db.Data;
+using Music.db.Data.Repository;
+using Music.db.Data.UnitOfWork;
+using Music.db.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-
+#region Database Connection
 var connectionString = builder.Configuration.GetConnectionString("LocalDbConnection");
 builder.Services.AddDbContext<MusicdbContext>(options => options.UseSqlServer(connectionString));
+#endregion
+#region Repository & UnitOfWork
+builder.Services.AddScoped<IGenericRepository<Song>,GenericRepository<Song>>();
+builder.Services.AddScoped<IGenericRepository<Genre>,GenericRepository<Genre>>();
+
+builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
+#endregion
 var app = builder.Build();
 
-//Seed data
+#region Seed Data
 using (var scope = app.Services.CreateScope())
 {
 	var services = scope.ServiceProvider;
@@ -26,6 +36,7 @@ using (var scope = app.Services.CreateScope())
 		logger.LogError(ex, "An error occurred while seeding the database.");
 	}
 }
+#endregion
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
