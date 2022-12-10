@@ -8,6 +8,6 @@
     public class SongListViewModel
     {
         public string SongSearch { get; set; }
-        public List<Song> Songs { get; set; }
+        public IEnumerable<Song> Songs { get; set; }
     }
 }

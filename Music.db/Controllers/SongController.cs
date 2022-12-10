@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Music.db.Data;
+using Music.db.Data.UnitOfWork;
 using Music.db.Models;
 using Music.db.ViewModels.Song;
 
@@ -9,10 +10,11 @@ namespace Music.db.Controllers
 {
 	public class SongController : Controller
 	{
-		private readonly MusicdbContext _context;
-		public SongController(MusicdbContext context)
+		private readonly IUnitOfWork _uow;
+
+		public SongController(IUnitOfWork uow)
 		{
-			_context = context;
+			_uow = uow;
 		}
 
 		#region Index
@@ -21,7 +23,7 @@ namespace Music.db.Controllers
 		{
 			CreateSongViewModel viewModel = new CreateSongViewModel()
 			{
-				Genres = new SelectList(await _context.Genres.OrderBy(x => x.Name).ToListAsync(), "Id", "Name")
+				Genres = new SelectList(await _uow.GenreRepository.GetAll().OrderBy(x => x.Name).ToListAsync(), "Id", "Name")
 			};
 
 			return View(viewModel);
@@ -34,7 +36,7 @@ namespace Music.db.Controllers
 		{
 			CreateSongViewModel viewModel = new CreateSongViewModel()
 			{
-				Genres = new SelectList(_context.Genres.OrderBy(x => x.Name).ToList(), "Id", "Name")
+				Genres = new SelectList(_uow.GenreRepository.GetAll().OrderBy(x => x.Name).ToList(), "Id", "Name"),
 			};
 
 			return View(viewModel);
@@ -52,13 +54,13 @@ namespace Music.db.Controllers
 					GenreId = viewModel.GenreId,
 				};
 
-				_context.Add(song);
-				await _context.SaveChangesAsync();
+				_uow.SongRepository.Create(song);
+				await _uow.Save();
 
 				return RedirectToAction(nameof(List));
 			}
 
-			viewModel.Genres = new SelectList(await _context.Genres.OrderBy(x => x.Name).ToListAsync(), "Id", "Name");
+			viewModel.Genres = new SelectList(await _uow.GenreRepository.GetAll().OrderBy(x => x.Name).ToListAsync(), "Id", "Name");
 
 			return View(nameof(Index));
 		}
@@ -69,7 +71,7 @@ namespace Music.db.Controllers
 		{
 			if (id == null) return NotFound();
 
-			var song = await _context.Songs.FirstOrDefaultAsync(x => x.Id == id);
+			var song = await _uow.SongRepository.GetById(id);
 
 			if (song == null) return NotFound();
 
@@ -89,17 +91,17 @@ namespace Music.db.Controllers
 		{
 			if (id == null) return NotFound();
 
-			var song = await _context.Songs.FindAsync(id);
+			var song = await _uow.SongRepository.GetById(id);
 
 			if (song == null) return NotFound();
 
-			_context.Songs.Remove(song);
+			_uow.SongRepository.Delete(song);
 
-			await _context.SaveChangesAsync();
+			await _uow.Save();
 
 			SongListViewModel viewModel = new SongListViewModel()
 			{
-				Songs = await _context.Songs.Include(x => x.Genre).ToListAsync()
+				Songs = await _uow.SongRepository.GetAll().Include(x => x.Genre).ToListAsync()
 			};
 			return View(nameof(List), viewModel);
 		}
@@ -112,7 +114,7 @@ namespace Music.db.Controllers
 		{
 			if (id == null) return NotFound();
 
-			var song = await _context.Songs.Include(x => x.Genre).Where(x => x.Id == id).FirstOrDefaultAsync();
+			var song = await _uow.SongRepository.GetAll().Include(x => x.Genre).Where(x => x.Id == id).FirstOrDefaultAsync();
 
 			if (song != null)
 			{
@@ -127,7 +129,7 @@ namespace Music.db.Controllers
 			{
 				SongListViewModel viewModel = new SongListViewModel()
 				{
-					Songs = _context.Songs.ToList()
+					Songs = await _uow.SongRepository.GetAll().Include(x => x.Genre).ToListAsync()
 				};
 				return View(nameof(List), viewModel);
 			}
@@ -141,7 +143,7 @@ namespace Music.db.Controllers
 		{
 			SongListViewModel viewModel = new SongListViewModel()
 			{
-				Songs = await _context.Songs.Include(x => x.Genre).ToListAsync()
+				Songs = await _uow.SongRepository.GetAll().Include(x => x.Genre).ToListAsync()
 			};
 
 			return View(viewModel);
@@ -155,7 +157,7 @@ namespace Music.db.Controllers
 		{
 			if (id == null) return NotFound();
 
-			var song = await _context.Songs.FindAsync(id);
+			var song = await _uow.SongRepository.GetById(id);
 
 			if (song == null) return NotFound();
 
@@ -165,7 +167,7 @@ namespace Music.db.Controllers
 				Title = song.Title,
 				GenreId= song.GenreId,
 
-				Genres = new SelectList(await _context.Genres.OrderBy(x => x.Name).ToListAsync(), "Id", "Name", song.GenreId),
+				Genres = new SelectList(await _uow.GenreRepository.GetAll().OrderBy(x => x.Name).ToListAsync(), "Id", "Name", song.GenreId),
 			};
 
 			return View(viewModel);
@@ -188,13 +190,13 @@ namespace Music.db.Controllers
 						GenreId = viewModel.GenreId,
 					};
 
-					_context.Update(song);
-					await _context.SaveChangesAsync();
+					_uow.SongRepository.Update(song);
+					await _uow.Save();
 
 				}
 				catch (DbUpdateConcurrencyException)
 				{
-					if (!_context.Songs.Any(x => x.Id == viewModel.SongId))
+					if (!_uow.SongRepository.GetAll().Any(x => x.Id == viewModel.SongId))
 					{
 						return NotFound();
 					}
@@ -206,7 +208,7 @@ namespace Music.db.Controllers
 				return RedirectToAction(nameof(Index));
 			}
 
-			viewModel.Genres = new SelectList(await _context.Genres.OrderBy(x => x.Name).ToListAsync(), "Id", "Name", viewModel.GenreId);
+			viewModel.Genres = new SelectList(await _uow.GenreRepository.GetAll().OrderBy(x => x.Name).ToListAsync(), "Id", "Name", viewModel.GenreId);
 
 			return View(viewModel);
 		}
