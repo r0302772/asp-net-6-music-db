@@ -27,13 +27,19 @@
 					@genre.Id
 				</td>
 				<td>
-					@genre.Name
+					<a asp-controller="Genre" asp-action="Details" asp-route-id="@genre.Id">
+						@genre.Name
+					</a>
 				</td>
 				<td>
-					<a class="text-primary" asp-controller="Genre" asp-action="Update" asp-route-id="@genre.Id"><i class="bi bi-pencil-square"></i></a>
+					<a class="text-primary" asp-controller="Genre" asp-action="Update" asp-route-id="@genre.Id">
+						<i class="bi bi-pencil-square"></i>
+					</a>
 				</td>
 				<td>
-					<a class="text-danger" asp-controller="Genre" asp-action="Delete" asp-route-id="@genre.Id"><i class="bi bi-x-lg"></i></a>
+					<a class="text-danger" asp-controller="Genre" asp-action="Delete" asp-route-id="@genre.Id">
+						<i class="bi bi-x-lg"></i>
+					</a>
 				</td>
 			</tr>
 		}

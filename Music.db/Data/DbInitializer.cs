@@ -8,8 +8,30 @@ namespace Music.db.Data
 		{
 			context.Database.EnsureCreated();
 
+			if (context.Artists.Any()) return;
 			if (context.Genres.Any()) return;
 			if (context.Songs.Any()) return;
+
+			#region Seed Artists
+
+			var artists = new Artist[]
+			{
+				new Artist{Name="Elderbrook", },
+				new Artist{Name="Udex",},
+				new Artist{Name="Wilkinson",},
+				new Artist{Name="Netsky",},
+				new Artist{Name="KREAM",},
+				new Artist{Name="Elvis Presley",},
+			};
+
+			foreach (Artist a in artists)
+			{
+				context.Artists.Add(a);
+			}
+
+			context.SaveChanges();
+
+			#endregion
 
 			#region Seed Genres
 

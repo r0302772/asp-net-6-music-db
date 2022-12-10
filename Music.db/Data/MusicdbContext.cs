@@ -12,7 +12,7 @@ namespace Music.db.Data
 
 
 		//DbSets that contain data
-		//public DbSet<Artist> Artists { get; set; }
+		public DbSet<Artist> Artists { get; set; }
 		public DbSet<Genre> Genres { get; set; }
 		public DbSet<Song> Songs { get; set; }
 		//public DbSet<SongArtist> SongArtists { get; set; }
@@ -23,9 +23,13 @@ namespace Music.db.Data
 		{
 			base.OnModelCreating(modelBuilder);
 
-			//modelBuilder.Entity<Artist>()
-			//    .ToTable(nameof(Artist))
-			//    .Property(a => a.Name).IsRequired();
+			#region Artist
+
+			modelBuilder.Entity<Artist>().ToTable(nameof(Artist));
+			modelBuilder.Entity<Artist>().HasKey(a => a.Id);
+			modelBuilder.Entity<Artist>().Property(a => a.Name).IsRequired();
+
+			#endregion
 
 			#region Genre
 

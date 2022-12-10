@@ -6,8 +6,9 @@ namespace Music.db.Data.UnitOfWork
 	public interface IUnitOfWork
 	{
 		#region Repository
-		IGenericRepository<Song> SongRepository { get; }
+		IGenericRepository<Artist> ArtistRepository { get; }
 		IGenericRepository<Genre> GenreRepository { get; }
+		IGenericRepository<Song> SongRepository { get; }
 		#endregion
 
 		Task Save();

@@ -16,7 +16,7 @@
 				Title
 			</th>
 			<th scope="col">
-				Genre
+				Artist
 			</th>
 			<th></th>
 			<th></th>
@@ -25,23 +25,22 @@
 	<tbody>
 		@foreach (var song in Model.Songs)
 		{
-				<tr>
-					<td>
+			<tr>
+				<td>
 					@song.Id
-					</td>
-					<td>
-						<a asp-controller="Song" asp-action="Details" asp-route-id="@song.Id">@song.Title</a>
-					</td>
-					<td>
-					@song.Genre.Name
-					</td>
-					<td>
-						<a class="text-primary" asp-controller="Song" asp-action="Update" asp-route-id="@song.Id"><i class="bi bi-pencil-square"></i></a>
-					</td>
-					<td>
-						<a class="text-danger" asp-controller="Song" asp-action="Delete" asp-route-id="@song.Id"><i class="bi bi-x-lg"></i></a>
-					</td>
-				</tr>
+				</td>
+				<td>
+					<a asp-controller="Song" asp-action="Details" asp-route-id="@song.Id">@song.Title</a>
+				</td>
+				<td>
+				</td>
+				<td>
+					<a class="text-primary" asp-controller="Song" asp-action="Update" asp-route-id="@song.Id"><i class="bi bi-pencil-square"></i></a>
+				</td>
+				<td>
+					<a class="text-danger" asp-controller="Song" asp-action="Delete" asp-route-id="@song.Id"><i class="bi bi-x-lg"></i></a>
+				</td>
+			</tr>
 		}
 	</tbody>
 </table>

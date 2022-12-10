@@ -12,6 +12,21 @@ namespace Music.db.Data.UnitOfWork
 			_context = context;
 		}
 
+		#region Arist
+		private IGenericRepository<Artist> artistRepository;
+		public IGenericRepository<Artist> ArtistRepository
+		{
+			get
+			{
+				if (artistRepository == null)
+				{
+					artistRepository = new GenericRepository<Artist>(_context);
+				}
+				return artistRepository;
+			}
+		}
+		#endregion
+
 		#region Genre
 		private IGenericRepository<Genre> genreRepository;
 		public IGenericRepository<Genre> GenreRepository

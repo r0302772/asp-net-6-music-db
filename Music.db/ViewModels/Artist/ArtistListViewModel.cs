@@ -4,6 +4,6 @@
     public class ArtistListViewModel
     {
         public string ArtistSearch { get; set; }
-        public List<Artist> Artists { get; set; }
+		public IEnumerable<Artist> Artists { get; set; }
     }
 }

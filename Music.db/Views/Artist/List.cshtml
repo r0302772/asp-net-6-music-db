@@ -1,0 +1,53 @@
+﻿@model Music.db.ViewModels.Artist.ArtistListViewModel
+
+@{
+	ViewData["Title"] = "Artists";
+}
+
+<h1 class="text-center display-3">Artists</h1>
+
+<table class="table table-hover">
+	<thead>
+		<tr>
+			<th scope="col">
+				ID
+			</th>
+			<th scope="col">
+				Name
+			</th>
+			<th scope="col">
+				Members
+			</th>
+			<th></th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var artist in Model.Artists)
+		{
+			<tr>
+				<td>
+					@artist.Id
+				</td>
+				<td>
+					<a asp-controller="Artist" asp-action="Details" asp-route-id="@artist.Id">
+						@artist.Name
+					</a>
+				</td>
+				<td>
+
+				</td>
+				<td>
+					<a class="text-primary" asp-controller="Artist" asp-action="Update" asp-route-id="@artist.Id">
+						<i class="bi bi-pencil-square"></i>
+					</a>
+				</td>
+				<td>
+					<a class="text-danger" asp-controller="Artist" asp-action="Delete" asp-route-id="@artist.Id">
+						<i class="bi bi-x-lg"></i>
+					</a>
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>
