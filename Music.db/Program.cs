@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using Music.db.Data;
@@ -18,6 +19,10 @@ builder.Services.AddScoped<IGenericRepository<Song>,GenericRepository<Song>>();
 builder.Services.AddScoped<IGenericRepository<Genre>,GenericRepository<Genre>>();
 
 builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
+#endregion
+#region Identity
+builder.Services.AddDefaultIdentity<IdentityUser>()
+	.AddEntityFrameworkStores<MusicdbContext>();
 #endregion
 var app = builder.Build();
 
@@ -51,10 +56,12 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
 	name: "default",
 	pattern: "{controller=Home}/{action=Index}/{id?}");
+app.MapRazorPages();
 
 app.Run();

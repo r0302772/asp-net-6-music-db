@@ -1,57 +1,61 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Music.db.Models;
 
 namespace Music.db.Data
 {
-    public class MusicdbContext : DbContext
-    {
-        //MusicDbContext inherrits from DbContext and forsees database functionality
-        public MusicdbContext(DbContextOptions<MusicdbContext> options) : base(options) { }
+	public class MusicdbContext : IdentityDbContext<IdentityUser>
+	{
+		//MusicDbContext inherrits from DbContext and forsees database functionality
+		public MusicdbContext(DbContextOptions<MusicdbContext> options) : base(options) { }
 
 
-        //DbSets that contain data
-        //public DbSet<Artist> Artists { get; set; }
-        public DbSet<Genre> Genres { get; set; }
-        public DbSet<Song> Songs { get; set; }
-        //public DbSet<SongArtist> SongArtists { get; set; }
+		//DbSets that contain data
+		//public DbSet<Artist> Artists { get; set; }
+		public DbSet<Genre> Genres { get; set; }
+		public DbSet<Song> Songs { get; set; }
+		//public DbSet<SongArtist> SongArtists { get; set; }
 
 
-        //OnModelCreating methode that provides a translation to the database
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            //modelBuilder.Entity<Artist>()
-            //    .ToTable(nameof(Artist))
-            //    .Property(a => a.Name).IsRequired();
+		//OnModelCreating methode that provides a translation to the database
+		protected override void OnModelCreating(ModelBuilder modelBuilder)
+		{
+			base.OnModelCreating(modelBuilder);
 
-            #region Genre
+			//modelBuilder.Entity<Artist>()
+			//    .ToTable(nameof(Artist))
+			//    .Property(a => a.Name).IsRequired();
 
-            modelBuilder.Entity<Genre>().ToTable(nameof(Genre));
-            modelBuilder.Entity<Genre>().HasKey(g => g.Id);
-            modelBuilder.Entity<Genre>().Property(g => g.Name).IsRequired();
+			#region Genre
 
-            #endregion
+			modelBuilder.Entity<Genre>().ToTable(nameof(Genre));
+			modelBuilder.Entity<Genre>().HasKey(g => g.Id);
+			modelBuilder.Entity<Genre>().Property(g => g.Name).IsRequired();
 
-            #region Song
+			#endregion
 
-            modelBuilder.Entity<Song>().ToTable(nameof(Song));
-            modelBuilder.Entity<Song>().HasKey(s => s.Id);
-            modelBuilder.Entity<Song>().Property(s => s.Title).IsRequired();
+			#region Song
 
-            #endregion
+			modelBuilder.Entity<Song>().ToTable(nameof(Song));
+			modelBuilder.Entity<Song>().HasKey(s => s.Id);
+			modelBuilder.Entity<Song>().Property(s => s.Title).IsRequired();
 
-            //modelBuilder.Entity<SongArtist>()
-            //    .ToTable(nameof(SongArtist));
+			#endregion
 
-            #region Relations
+			//modelBuilder.Entity<SongArtist>()
+			//    .ToTable(nameof(SongArtist));
 
-            #region Song to Genre
-            modelBuilder.Entity<Song>()
-                .HasOne(s => s.Genre)
-                .WithMany(g => g.Songs)
-                .HasForeignKey(s => s.GenreId);
-            #endregion
+			#region Relations
 
-            #endregion
-        }
-    }
+			#region Song to Genre
+			modelBuilder.Entity<Song>()
+				.HasOne(s => s.Genre)
+				.WithMany(g => g.Songs)
+				.HasForeignKey(s => s.GenreId);
+			#endregion
+
+			#endregion
+		}
+	}
 }
