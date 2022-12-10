@@ -1,0 +1,33 @@
+﻿@model Music.db.ViewModels.Artist.UpdateArtistViewModel
+
+@{
+	ViewData["Title"] = $"Update {Model.Name}";
+}
+
+<div>
+	<div>
+		<h5>Edit @Model.Name</h5>
+	</div>
+	<form asp-action="Update">
+		<input type="hidden" asp-for="ArtistId" />
+		<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+		<div class="row pb-1">
+			<div class="input-group mb-2">
+				<span class="input-group-text"><label asp-for="Name" class="control-label "></label></span>
+				<input asp-for="Name" class="form-control">
+			</div>
+			<div class="pb-2">
+				<span asp-validation-for="Name" class="text-danger"></span>
+			</div>
+		</div>
+
+		<button type="submit" class="btn btn-primary">Save</button>
+		<a class="btn btn-danger m-1" asp-controller="Artist" asp-action="List">Cancel</a>
+	</form>
+</div>
+
+@section Scripts {
+	@{
+		<partial name="_ValidationScriptsPartial" />
+	}
+}
