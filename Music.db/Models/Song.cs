@@ -10,6 +10,6 @@ namespace Music.db.Models
         //Navigation Props
         public int GenreId { get; set; }
         public Genre Genre { get; set; }
-        //public virtual ICollection<Artist> Artists { get; set; }
+        public virtual ICollection<SongArtist> SongArtists { get; set; }
     }
 }

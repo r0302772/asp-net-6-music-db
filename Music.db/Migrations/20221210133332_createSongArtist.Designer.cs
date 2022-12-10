@@ -12,8 +12,8 @@ using Music.db.Data;
 namespace Music.db.Migrations
 {
     [DbContext(typeof(MusicdbContext))]
-    [Migration("20221210104118_AddIdentitySchema")]
-    partial class AddIdentitySchema
+    [Migration("20221210133332_createSongArtist")]
+    partial class createSongArtist
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -226,6 +226,23 @@ namespace Music.db.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Music.db.Models.Artist", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Artist", (string)null);
+                });
+
             modelBuilder.Entity("Music.db.Models.Genre", b =>
                 {
                     b.Property<int>("Id")
@@ -263,6 +280,29 @@ namespace Music.db.Migrations
                     b.HasIndex("GenreId");
 
                     b.ToTable("Song", (string)null);
+                });
+
+            modelBuilder.Entity("Music.db.Models.SongArtist", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("ArtistId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SongId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ArtistId");
+
+                    b.HasIndex("SongId");
+
+                    b.ToTable("SongArtist", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -327,9 +367,38 @@ namespace Music.db.Migrations
                     b.Navigation("Genre");
                 });
 
+            modelBuilder.Entity("Music.db.Models.SongArtist", b =>
+                {
+                    b.HasOne("Music.db.Models.Artist", "Artist")
+                        .WithMany("SongArtists")
+                        .HasForeignKey("ArtistId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Music.db.Models.Song", "Song")
+                        .WithMany("SongArtists")
+                        .HasForeignKey("SongId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Artist");
+
+                    b.Navigation("Song");
+                });
+
+            modelBuilder.Entity("Music.db.Models.Artist", b =>
+                {
+                    b.Navigation("SongArtists");
+                });
+
             modelBuilder.Entity("Music.db.Models.Genre", b =>
                 {
                     b.Navigation("Songs");
+                });
+
+            modelBuilder.Entity("Music.db.Models.Song", b =>
+                {
+                    b.Navigation("SongArtists");
                 });
 #pragma warning restore 612, 618
         }

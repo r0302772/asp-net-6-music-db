@@ -15,7 +15,7 @@ namespace Music.db.Data
 		public DbSet<Artist> Artists { get; set; }
 		public DbSet<Genre> Genres { get; set; }
 		public DbSet<Song> Songs { get; set; }
-		//public DbSet<SongArtist> SongArtists { get; set; }
+		public DbSet<SongArtist> SongArtists { get; set; }
 
 
 		//OnModelCreating methode that provides a translation to the database
@@ -47,9 +47,6 @@ namespace Music.db.Data
 
 			#endregion
 
-			//modelBuilder.Entity<SongArtist>()
-			//    .ToTable(nameof(SongArtist));
-
 			#region Relations
 
 			#region Song to Genre
@@ -57,6 +54,22 @@ namespace Music.db.Data
 				.HasOne(s => s.Genre)
 				.WithMany(g => g.Songs)
 				.HasForeignKey(s => s.GenreId);
+			#endregion
+
+			#region Song to Artist
+			modelBuilder.Entity<SongArtist>().ToTable(nameof(SongArtist));
+			modelBuilder.Entity<SongArtist>().HasKey(sa => sa.Id);
+
+			modelBuilder.Entity<SongArtist>()
+				.HasOne<Song>(sa => sa.Song)
+				.WithMany(s => s.SongArtists)
+				.HasForeignKey(sa => sa.SongId);
+
+
+			modelBuilder.Entity<SongArtist>()
+				.HasOne<Artist>(sa => sa.Artist)
+				.WithMany(s => s.SongArtists)
+				.HasForeignKey(sa => sa.ArtistId);
 			#endregion
 
 			#endregion

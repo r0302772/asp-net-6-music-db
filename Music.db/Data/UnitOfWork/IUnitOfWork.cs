@@ -9,6 +9,7 @@ namespace Music.db.Data.UnitOfWork
 		IGenericRepository<Artist> ArtistRepository { get; }
 		IGenericRepository<Genre> GenreRepository { get; }
 		IGenericRepository<Song> SongRepository { get; }
+		IGenericRepository<SongArtist> SongArtistRepository { get; }
 		#endregion
 
 		Task Save();

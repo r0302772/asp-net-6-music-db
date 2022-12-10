@@ -57,6 +57,21 @@ namespace Music.db.Data.UnitOfWork
 		}
 		#endregion
 
+		#region SongArtist
+		private IGenericRepository<SongArtist> songArtistRepository;
+		public IGenericRepository<SongArtist> SongArtistRepository
+		{
+			get
+			{
+				if (songArtistRepository == null)
+				{
+					songArtistRepository = new GenericRepository<SongArtist>(_context);
+				}
+				return songArtistRepository;
+			}
+		}
+		#endregion
+
 		public async Task Save() { await _context.SaveChangesAsync(); }
 	}
 }
