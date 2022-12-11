@@ -24,9 +24,21 @@
 
 			<div class="input-group mb-2">
 				<span class="input-group-text">
+					<label asp-for="ArtistId" class="control-label"></label>
+				</span>
+				<select asp-for="ArtistId" asp-items="Model.Artists" class="form-select" multiple>
+					<option selected disabled>Select an artist</option>
+				</select>
+			</div>
+			<div class="pb-2">
+				<span asp-validation-for="ArtistId" class="text-danger"></span>
+			</div>
+
+			<div class="input-group mb-2">
+				<span class="input-group-text">
 					<label asp-for="GenreId" class="control-label"></label>
 				</span>
-				<select asp-for="GenreId" asp-items="Model.Genres" class="form-control">
+				<select asp-for="GenreId" asp-items="Model.Genres" class="form-select">
 					<option selected disabled>Select a genre</option>
 				</select>
 			</div>

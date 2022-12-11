@@ -19,6 +19,7 @@
 			<th scope="col">
 				Title
 			</th>
+			<th>Artist</th>
 			<th scope="col">
 				Genre
 			</th>
@@ -35,6 +36,16 @@
 				</td>
 				<td>
 					<a asp-controller="Song" asp-action="Details" asp-route-id="@song.Id">@song.Title</a>
+				</td>
+				<td>
+					@foreach (var item in Model.SongArtists.Where(x => x.SongId == song.Id))
+					{
+						<a asp-controller="Artist" asp-action="Details" asp-route-id="@item.ArtistId">@item.Artist.Name</a>
+						if (item != Model.SongArtists.Last())
+						{
+							<span>, </span>
+						}
+					}
 				</td>
 				<td>
 					@song.Genre.Name

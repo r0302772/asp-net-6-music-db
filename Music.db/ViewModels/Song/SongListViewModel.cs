@@ -9,5 +9,6 @@
     {
         public string SongSearch { get; set; }
         public IEnumerable<Song> Songs { get; set; }
+        public IEnumerable<SongArtist> SongArtists { get; set; }
     }
 }

@@ -37,6 +37,7 @@ namespace Music.db.Controllers
 			CreateSongViewModel viewModel = new CreateSongViewModel()
 			{
 				Genres = new SelectList(_uow.GenreRepository.GetAll().OrderBy(x => x.Name).ToList(), "Id", "Name"),
+				Artists = new MultiSelectList(_uow.ArtistRepository.GetAll().OrderBy(x => x.Name), "Id", "Name")
 			};
 
 			return View(viewModel);
@@ -57,10 +58,20 @@ namespace Music.db.Controllers
 				_uow.SongRepository.Create(song);
 				await _uow.Save();
 
+				foreach (var artist in viewModel.ArtistId)
+				{
+					SongArtist sa = new SongArtist()
+					{
+						SongId = song.Id,
+						ArtistId = artist
+					};
+
+					_uow.SongArtistRepository.Create(sa);
+					await _uow.Save();
+				}
+
 				return RedirectToAction(nameof(List));
 			}
-
-			viewModel.Genres = new SelectList(await _uow.GenreRepository.GetAll().OrderBy(x => x.Name).ToListAsync(), "Id", "Name");
 
 			return View(nameof(Index));
 		}
@@ -143,7 +154,13 @@ namespace Music.db.Controllers
 		{
 			SongListViewModel viewModel = new SongListViewModel()
 			{
-				Songs = await _uow.SongRepository.GetAll().Include(x => x.Genre).ToListAsync()
+				Songs = await _uow.SongRepository.GetAll()
+												 .Include(x => x.Genre)
+												 .ToListAsync(),
+				SongArtists = await _uow.SongArtistRepository.GetAll()
+															 .Include(x => x.Song)
+															 .Include(x => x.Artist)
+															 .ToListAsync()
 			};
 
 			return View(viewModel);
@@ -161,13 +178,16 @@ namespace Music.db.Controllers
 
 			if (song == null) return NotFound();
 
+			var songArtists = await _uow.SongArtistRepository.GetAll().Where(x => x.SongId == song.Id).ToListAsync();
+
 			UpdateSongViewModel viewModel = new UpdateSongViewModel()
 			{
 				SongId = song.Id,
 				Title = song.Title,
-				GenreId= song.GenreId,
+				GenreId = song.GenreId,
 
 				Genres = new SelectList(await _uow.GenreRepository.GetAll().OrderBy(x => x.Name).ToListAsync(), "Id", "Name", song.GenreId),
+				Artists = new MultiSelectList(await _uow.ArtistRepository.GetAll().OrderBy(x => x.Name).ToListAsync(), "Id", "Name", songArtists.Select(x => x.ArtistId).ToArray())
 			};
 
 			return View(viewModel);
@@ -192,6 +212,20 @@ namespace Music.db.Controllers
 
 					_uow.SongRepository.Update(song);
 					await _uow.Save();
+
+					var songArtists = await _uow.SongArtistRepository.GetAll().Where(x => x.SongId == song.Id).ToListAsync();
+
+					foreach (var artist in viewModel.ArtistId)
+					{
+						SongArtist sa = new SongArtist()
+						{
+							SongId = song.Id,
+							ArtistId = artist
+						};
+
+						_uow.SongArtistRepository.Update(sa);
+						await _uow.Save();
+					}
 
 				}
 				catch (DbUpdateConcurrencyException)

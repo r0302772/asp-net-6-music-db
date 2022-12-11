@@ -6,7 +6,7 @@
 
 <div>
 	<div>
-		<h5>Edit @Model.Title</h5>
+		<h5>Update @Model.Title</h5>
 	</div>
 	<form asp-action="Update">
 		<input type="hidden" asp-for="SongId" />
@@ -18,6 +18,18 @@
 			</div>
 			<div class="pb-2">
 				<span asp-validation-for="Title" class="text-danger"></span>
+			</div>
+
+			<div class="input-group mb-2">
+				<span class="input-group-text">
+					<label asp-for="ArtistId" class="control-label"></label>
+				</span>
+				<select asp-for="ArtistId" asp-items="Model.Artists" class="form-select" multiple>
+					<option disabled>Select an artist</option>
+				</select>
+			</div>
+			<div class="pb-2">
+				<span asp-validation-for="ArtistId" class="text-danger"></span>
 			</div>
 
 			<div class="input-group mb-2">
