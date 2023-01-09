@@ -22,14 +22,14 @@
 
 			<div class="input-group mb-2">
 				<span class="input-group-text">
-					<label asp-for="ArtistId" class="control-label"></label>
+					<label asp-for="SelectedArtistIds" class="control-label"></label>
 				</span>
-				<select asp-for="ArtistId" asp-items="Model.Artists" class="form-select" multiple>
+				<select asp-for="SelectedArtistIds" asp-items="Model.Artists" class="form-select" multiple>
 					<option disabled>Select an artist</option>
 				</select>
 			</div>
 			<div class="pb-2">
-				<span asp-validation-for="ArtistId" class="text-danger"></span>
+				<span asp-validation-for="SelectedArtistIds" class="text-danger"></span>
 			</div>
 
 			<div class="input-group mb-2">

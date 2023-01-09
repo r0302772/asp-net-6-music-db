@@ -11,6 +11,7 @@ namespace Music.db.Data
 			if (context.Artists.Any()) return;
 			if (context.Genres.Any()) return;
 			if (context.Songs.Any()) return;
+			if (context.SongArtists.Any()) return;
 
 			#region Seed Artists
 
@@ -73,6 +74,28 @@ namespace Music.db.Data
 			context.SaveChanges();
 
 			#endregion
+
+			#region Seed SongArtists
+
+			var songArtists = new SongArtist[]
+			{
+				new SongArtist { SongId = 1, ArtistId = 1 },
+				new SongArtist { SongId = 2, ArtistId = 2 },
+				new SongArtist { SongId = 3, ArtistId = 3 },
+				new SongArtist { SongId = 4, ArtistId = 2 },
+				new SongArtist { SongId = 5, ArtistId = 5 },
+				new SongArtist { SongId = 6, ArtistId = 4 },
+			};
+
+			foreach (SongArtist sa in songArtists)
+			{
+				context.SongArtists.Add(sa);
+			}
+
+			context.SaveChanges();
+
+			#endregion
+
 		}
 	}
 }

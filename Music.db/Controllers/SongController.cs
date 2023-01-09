@@ -58,12 +58,12 @@ namespace Music.db.Controllers
 				_uow.SongRepository.Create(song);
 				await _uow.Save();
 
-				foreach (var artist in viewModel.ArtistId)
+				foreach (var artistId in viewModel.SelectedArtistIds)
 				{
 					SongArtist sa = new SongArtist()
 					{
 						SongId = song.Id,
-						ArtistId = artist
+						ArtistId = artistId
 					};
 
 					_uow.SongArtistRepository.Create(sa);
@@ -213,20 +213,33 @@ namespace Music.db.Controllers
 					_uow.SongRepository.Update(song);
 					await _uow.Save();
 
-					var songArtists = await _uow.SongArtistRepository.GetAll().Where(x => x.SongId == song.Id).ToListAsync();
+					var songArtists = _uow.SongArtistRepository.GetAll().Where(x => x.SongId == song.Id);
 
-					foreach (var artist in viewModel.ArtistId)
+					foreach (var songArtist in songArtists)
 					{
-						SongArtist sa = new SongArtist()
+						if (!viewModel.SelectedArtistIds.Contains(songArtist.ArtistId))
 						{
-							SongId = song.Id,
-							ArtistId = artist
-						};
-
-						_uow.SongArtistRepository.Update(sa);
-						await _uow.Save();
+							_uow.SongArtistRepository.Delete(songArtist);
+						}
 					}
 
+					foreach (var artistId in viewModel.SelectedArtistIds)
+					{
+						var songArtist = songArtists.FirstOrDefault(x => x.ArtistId == artistId);
+
+						if (songArtist == null)
+						{
+							SongArtist sa = new SongArtist()
+							{
+								SongId = song.Id,
+								ArtistId = artistId
+							};
+
+							_uow.SongArtistRepository.Create(sa);
+						}
+
+						await _uow.Save();
+					}
 				}
 				catch (DbUpdateConcurrencyException)
 				{
@@ -239,7 +252,7 @@ namespace Music.db.Controllers
 						throw;
 					}
 				}
-				return RedirectToAction(nameof(Index));
+				return RedirectToAction(nameof(List));
 			}
 
 			viewModel.Genres = new SelectList(await _uow.GenreRepository.GetAll().OrderBy(x => x.Name).ToListAsync(), "Id", "Name", viewModel.GenreId);
