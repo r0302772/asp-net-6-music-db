@@ -7,27 +7,40 @@ using Music.db.ViewModels.Genre;
 
 namespace Music.db.Controllers
 {
-    public class ArtistController : Controller
-    {
+	public class ArtistController : Controller
+	{
 		private readonly IUnitOfWork _uow;
 		public ArtistController(IUnitOfWork uow)
-        {
+		{
 			_uow = uow;
 		}
 
 		#region Index
 
 		public IActionResult Index()
-        {
-            return View();
-        }
+		{
+			return View();
+		}
 
 		#endregion
 
 		#region Create
-		public IActionResult Create()
+		public async Task<IActionResult> Create()
 		{
-			return View();
+			var allArtists = await _uow.ArtistRepository.GetAll().OrderBy(x => x.Name).ToListAsync();
+			string[] artistNames = new string[allArtists.Count];
+
+			for (int i = 0; i < allArtists.Count; i++)
+			{
+				artistNames[i] = allArtists[i].Name;
+
+			}
+
+			CreateArtistViewModel viewModel = new CreateArtistViewModel()
+			{
+				ArtistsNames = artistNames
+			};
+			return View(viewModel);
 		}
 
 		[HttpPost]
@@ -36,10 +49,15 @@ namespace Music.db.Controllers
 		{
 			if (ModelState.IsValid)
 			{
-				_uow.ArtistRepository.Create(new Artist()
+				var artist = await _uow.ArtistRepository.GetAll().FirstOrDefaultAsync(a => a.Name == viewModel.Name);
+
+				if (artist == null)
 				{
-					Name = viewModel.Name,
-				});
+					_uow.ArtistRepository.Create(new Artist()
+					{
+						Name = viewModel.Name,
+					});
+				}
 
 				await _uow.Save();
 

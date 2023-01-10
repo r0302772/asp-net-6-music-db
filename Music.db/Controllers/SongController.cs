@@ -21,7 +21,7 @@ namespace Music.db.Controllers
 
 		public async Task<IActionResult> Index()
 		{
-			CreateSongViewModel viewModel = new CreateSongViewModel()
+			SongViewModel viewModel = new SongViewModel()
 			{
 				Genres = new SelectList(await _uow.GenreRepository.GetAll().OrderBy(x => x.Name).ToListAsync(), "Id", "Name")
 			};
@@ -32,12 +32,20 @@ namespace Music.db.Controllers
 		#endregion
 
 		#region Create
-		public IActionResult Create()
+		public async Task<IActionResult> Create()
 		{
-			CreateSongViewModel viewModel = new CreateSongViewModel()
+			var artists = await _uow.ArtistRepository.GetAll().OrderBy(x => x.Name).ToListAsync();
+			var remixers = await _uow.ArtistRepository.GetAll().OrderBy(x => x.Name).ToListAsync();
+
+			remixers.Add(new Artist { Name = "Original version." });
+			var genres = await _uow.GenreRepository.GetAll().OrderBy(x => x.Name).ToListAsync();
+
+
+			SongViewModel viewModel = new SongViewModel()
 			{
-				Genres = new SelectList(_uow.GenreRepository.GetAll().OrderBy(x => x.Name).ToList(), "Id", "Name"),
-				Artists = new MultiSelectList(_uow.ArtistRepository.GetAll().OrderBy(x => x.Name), "Id", "Name")
+				Genres = new SelectList(genres, "Id", "Name"),
+				Artists = new MultiSelectList(artists, "Id", "Name"),
+				Remixers = new SelectList(remixers.OrderBy(x => x.Name), "Id", "Name", 0),
 			};
 
 			return View(viewModel);
@@ -45,7 +53,7 @@ namespace Music.db.Controllers
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Create(CreateSongViewModel viewModel)
+		public async Task<IActionResult> Create(SongViewModel viewModel)
 		{
 			if (ModelState.IsValid)
 			{
@@ -53,12 +61,13 @@ namespace Music.db.Controllers
 				{
 					Title = viewModel.Title,
 					GenreId = viewModel.GenreId,
+					RemixerId = (viewModel.RemixerId == 0) ? null : viewModel.RemixerId,
 				};
 
 				_uow.SongRepository.Create(song);
 				await _uow.Save();
 
-				foreach (var artistId in viewModel.SelectedArtistIds)
+				foreach (var artistId in viewModel.ArtistsIds)
 				{
 					SongArtist sa = new SongArtist()
 					{
@@ -102,6 +111,12 @@ namespace Music.db.Controllers
 		{
 			if (id == null) return NotFound();
 
+			var songArtists = await _uow.SongArtistRepository.GetAll().Where(x => x.SongId == id).ToListAsync();
+
+			foreach (var songArtist in songArtists)
+			{
+				_uow.SongArtistRepository.Delete(songArtist);
+			}
 			var song = await _uow.SongRepository.GetById(id);
 
 			if (song == null) return NotFound();
@@ -112,7 +127,13 @@ namespace Music.db.Controllers
 
 			SongListViewModel viewModel = new SongListViewModel()
 			{
-				Songs = await _uow.SongRepository.GetAll().Include(x => x.Genre).ToListAsync()
+				Songs = await _uow.SongRepository.GetAll()
+												 .Include(x => x.Genre)
+												 .ToListAsync(),
+				SongArtists = await _uow.SongArtistRepository.GetAll()
+															 .Include(x => x.Song)
+															 .Include(x => x.Artist)
+															 .ToListAsync()
 			};
 			return View(nameof(List), viewModel);
 		}
@@ -156,6 +177,7 @@ namespace Music.db.Controllers
 			{
 				Songs = await _uow.SongRepository.GetAll()
 												 .Include(x => x.Genre)
+												 .Include(x => x.Remixer)
 												 .ToListAsync(),
 				SongArtists = await _uow.SongArtistRepository.GetAll()
 															 .Include(x => x.Song)
@@ -180,14 +202,21 @@ namespace Music.db.Controllers
 
 			var songArtists = await _uow.SongArtistRepository.GetAll().Where(x => x.SongId == song.Id).ToListAsync();
 
-			UpdateSongViewModel viewModel = new UpdateSongViewModel()
+			var artists = await _uow.ArtistRepository.GetAll().OrderBy(x => x.Name).ToListAsync();
+			var remixers = await _uow.ArtistRepository.GetAll().OrderBy(x => x.Name).ToListAsync();
+
+			remixers.Add(new Artist { Name = "Original version." });
+			var genres = await _uow.GenreRepository.GetAll().OrderBy(x => x.Name).ToListAsync();
+
+			SongViewModel viewModel = new SongViewModel()
 			{
 				SongId = song.Id,
 				Title = song.Title,
 				GenreId = song.GenreId,
 
-				Genres = new SelectList(await _uow.GenreRepository.GetAll().OrderBy(x => x.Name).ToListAsync(), "Id", "Name", song.GenreId),
-				Artists = new MultiSelectList(await _uow.ArtistRepository.GetAll().OrderBy(x => x.Name).ToListAsync(), "Id", "Name", songArtists.Select(x => x.ArtistId).ToArray())
+				Genres = new SelectList(genres, "Id", "Name", song.GenreId),
+				Artists = new MultiSelectList(artists, "Id", "Name", songArtists.Select(x => x.ArtistId).ToArray()),
+				Remixers = new SelectList(remixers.OrderBy(x => x.Name), "Id", "Name", song.RemixerId == null ? 0 : song.RemixerId)
 			};
 
 			return View(viewModel);
@@ -195,7 +224,7 @@ namespace Music.db.Controllers
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Update(int id, UpdateSongViewModel viewModel)
+		public async Task<IActionResult> Update(int id, SongViewModel viewModel)
 		{
 			if (id != viewModel.SongId) return NotFound();
 
@@ -208,6 +237,7 @@ namespace Music.db.Controllers
 						Id = viewModel.SongId,
 						Title = viewModel.Title,
 						GenreId = viewModel.GenreId,
+						RemixerId = (viewModel.RemixerId == 0) ? null : viewModel.RemixerId,
 					};
 
 					_uow.SongRepository.Update(song);
@@ -217,13 +247,13 @@ namespace Music.db.Controllers
 
 					foreach (var songArtist in songArtists)
 					{
-						if (!viewModel.SelectedArtistIds.Contains(songArtist.ArtistId))
+						if (!viewModel.ArtistsIds.Contains(songArtist.ArtistId))
 						{
 							_uow.SongArtistRepository.Delete(songArtist);
 						}
 					}
 
-					foreach (var artistId in viewModel.SelectedArtistIds)
+					foreach (var artistId in viewModel.ArtistsIds)
 					{
 						var songArtist = songArtists.FirstOrDefault(x => x.ArtistId == artistId);
 

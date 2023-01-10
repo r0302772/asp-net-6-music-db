@@ -36,29 +36,39 @@
 				</td>
 				<td>
 					<a asp-controller="Song" asp-action="Details" asp-route-id="@song.Id">@song.Title</a>
+					@if (song.Remixer != null)
+					{
+						<span>
+							<a asp-controller="Artist"
+					   asp-action="Details"
+					   asp-route-id="@song.RemixerId">
+								(@song.Remixer.Name Remix)
+							</a>
+						</span>
+					}
 				</td>
 				<td>
 					@foreach (var item in Model.SongArtists.Where(x => x.SongId == song.Id))
-				{
-				<a asp-controller="Artist" asp-action="Details" asp-route-id="@item.ArtistId">
-					@item.Artist.Name
-				</a>
+					{
+						<a asp-controller="Artist" asp-action="Details" asp-route-id="@item.ArtistId">
+							@item.Artist.Name
+						</a>
 						if (item != Model.SongArtists.Where(x => x.SongId == song.Id).Last())
-				{
-				<span>- </span>
-				}
-				}
-			</td>
-			<td>
-				@song.Genre.Name
-			</td>
-			<td>
-				<a class="text-primary" asp-controller="Song" asp-action="Update" asp-route-id="@song.Id"><i class="bi bi-pencil-square"></i></a>
-			</td>
-			<td>
-				<a class="text-danger" asp-controller="Song" asp-action="Delete" asp-route-id="@song.Id"><i class="bi bi-x-lg"></i></a>
-			</td>
-		</tr>
+						{
+							<span>- </span>
+						}
+					}
+				</td>
+				<td>
+					@song.Genre.Name
+				</td>
+				<td>
+					<a class="text-primary" asp-controller="Song" asp-action="Update" asp-route-id="@song.Id"><i class="bi bi-pencil-square"></i></a>
+				</td>
+				<td>
+					<a class="text-danger" asp-controller="Song" asp-action="Delete" asp-route-id="@song.Id"><i class="bi bi-x-lg"></i></a>
+				</td>
+			</tr>
 		}
 	</tbody>
 </table>

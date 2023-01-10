@@ -1,52 +1,93 @@
-﻿@model Music.db.ViewModels.Song.UpdateSongViewModel
+﻿@model Music.db.ViewModels.Song.SongViewModel
 
 @{
 	ViewData["Title"] = $"Update {Model.Title}";
 }
 
-<div>
+<div class="row pt-5">
 	<div>
-		<h5>Update @Model.Title</h5>
+		<h3>Update @Model.Title</h3>
 	</div>
+
+	<hr/>
+
 	<form asp-action="Update">
 		<input type="hidden" asp-for="SongId" />
-		<div asp-validation-summary="ModelOnly" class="text-danger"></div>
-		<div class="row pb-1">
-			<div class="input-group mb-2">
-				<span class="input-group-text"><label asp-for="Title" class="control-label "></label></span>
-				<input asp-for="Title" class="form-control">
-			</div>
-			<div class="pb-2">
-				<span asp-validation-for="Title" class="text-danger"></span>
+		<div class="row">
+
+			<div class="col-md">
+				<div class="input-group pt-2">
+					<span class="input-group-text"><label asp-for="Title" class="control-label "></label></span>
+					<input asp-for="Title" class="form-control">
+				</div>
+				<div class="pt-2">
+					<span asp-validation-for="Title" class="text-danger"></span>
+				</div>
 			</div>
 
-			<div class="input-group mb-2">
-				<span class="input-group-text">
-					<label asp-for="SelectedArtistIds" class="control-label"></label>
-				</span>
-				<select asp-for="SelectedArtistIds" asp-items="Model.Artists" class="form-select" multiple>
-					<option disabled>Select an artist</option>
-				</select>
-			</div>
-			<div class="pb-2">
-				<span asp-validation-for="SelectedArtistIds" class="text-danger"></span>
+			<div class="col-md">
+				<div class="input-group pt-2">
+					<span class="input-group-text">
+						<label asp-for="GenreId" class="control-label"></label>
+					</span>
+					<select asp-for="GenreId" asp-items="Model.Genres" class="form-select">
+						<option selected disabled>Select a genre</option>
+					</select>
+				</div>
+				<div class="pt-2">
+					<span asp-validation-for="GenreId" class="text-danger"></span>
+				</div>
 			</div>
 
-			<div class="input-group mb-2">
-				<span class="input-group-text">
-					<label asp-for="GenreId" class="control-label"></label>
-				</span>
-				<select asp-for="GenreId" asp-items="Model.Genres" class="form-control">
-					<option selected disabled>Select a genre</option>
-				</select>
-			</div>
-			<div class="pb-2">
-				<span asp-validation-for="GenreId" class="text-danger"></span>
-			</div>
 		</div>
 
-		<button type="submit" class="btn btn-primary">Save</button>
-		<a class="btn btn-danger m-1" asp-controller="Song" asp-action="List">Cancel</a>
+		<div class="row">
+			<div class="col-md">
+				@*				<div class="input-group">
+				<span class="input-group-text"><label class="control-label">Search artist(s)</label></span>
+				<input class="form-control" id="search-artist-input" autocomplete="off">
+				</div>
+				<div class="form-control mt-3" id="artists-checkboxes">
+				@foreach (var artist in Model.Artists)
+				{
+				<div class="form-check form-check-inline ms-1 p-3">
+				<input class="form-check-input" type="checkbox" id="@artist.Value" value="@artist.Key">
+				<label class="form-check-label" for="@artist.Value">@artist.Value</label>
+				</div>
+				}
+				</div>
+				<div class="alert alert-primary mt-2" role="alert" id="no-artists-found" style="display:none">
+				No matching artists...
+				</div>*@
+
+				<div class="input-group pt-2">
+					<span class="input-group-text">
+						<label asp-for="ArtistsIds" class="control-label"></label>
+					</span>
+					<select asp-for="ArtistsIds" asp-items="Model.Artists" class="form-select" size="5" multiple>
+						<option disabled>Select an artist</option>
+					</select>
+				</div>
+				<div class="pt-2">
+					<span asp-validation-for="ArtistsIds" class="text-danger"></span>
+				</div>
+			</div>
+			<div class="col-md">
+				<div class="input-group pt-2">
+					<span class="input-group-text">
+						<label asp-for="RemixerId" class="control-label"></label>
+					</span>
+					<select asp-for="RemixerId" asp-items="Model.Remixers" class="form-select"></select>
+				</div>
+				<div class="pt-2">
+					<span asp-validation-for="RemixerId" class="text-danger"></span>
+				</div>
+			</div>
+		</div>
+		<div class="pt-2">
+			<button type="submit" class="btn btn-primary">Save</button>
+			<a class="btn btn-danger m-1" asp-controller="Song" asp-action="List">Cancel</a>
+		</div>
 	</form>
 </div>
 

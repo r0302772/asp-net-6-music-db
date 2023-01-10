@@ -12,8 +12,8 @@ using Music.db.Data;
 namespace Music.db.Migrations
 {
     [DbContext(typeof(MusicdbContext))]
-    [Migration("20221210133332_createSongArtist")]
-    partial class createSongArtist
+    [Migration("20230110194643_initialMigration")]
+    partial class initialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -271,6 +271,9 @@ namespace Music.db.Migrations
                     b.Property<int>("GenreId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("RemixerId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -278,6 +281,8 @@ namespace Music.db.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("GenreId");
+
+                    b.HasIndex("RemixerId");
 
                     b.ToTable("Song", (string)null);
                 });
@@ -364,7 +369,13 @@ namespace Music.db.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Music.db.Models.Artist", "Remixer")
+                        .WithMany()
+                        .HasForeignKey("RemixerId");
+
                     b.Navigation("Genre");
+
+                    b.Navigation("Remixer");
                 });
 
             modelBuilder.Entity("Music.db.Models.SongArtist", b =>

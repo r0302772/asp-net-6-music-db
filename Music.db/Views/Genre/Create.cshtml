@@ -7,7 +7,7 @@
 <div class="row pt-5">
 	<h3>Create a genre</h3>
 
-	<hr/>
+	<hr />
 
 	<form asp-action="Create">
 		<div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -15,7 +15,7 @@
 			<div class="col-md-6">
 				<div class="input-group mb-2">
 					<span class="input-group-text"><label asp-for="Name" class="control-label "></label></span>
-					<input asp-for="Name" class="form-control">
+					<input asp-for="Name" id="genre-input" class="form-control">
 				</div>
 				<div class="pb-2">
 					<span asp-validation-for="Name" class="text-danger"></span>
@@ -34,5 +34,12 @@
 @section Scripts {
 	@{
 		<partial name="_ValidationScriptsPartial" />
+		<script>
+			$(function () {
+				$("#genre-input").autocomplete({
+					source: @Html.Raw(Json.Serialize(Model.Genres))
+			});
+			});
+		</script>
 	}
 }

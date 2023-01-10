@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Music.db.Data.UnitOfWork;
 using Music.db.Models;
+using Music.db.ViewModels.Artist;
 using Music.db.ViewModels.Genre;
 
 namespace Music.db.Controllers
@@ -26,7 +27,21 @@ namespace Music.db.Controllers
 		#region Create
 		public IActionResult Create()
 		{
-			return View();
+			var allGenres = _uow.GenreRepository.GetAll().OrderBy(x => x.Name).ToList();
+			string[] genres = new string[allGenres.Count];
+
+			for (int i = 0; i < allGenres.Count; i++)
+			{
+				genres[i] = allGenres[i].Name;
+
+			}
+
+			CreateGenreViewModel viewModel = new CreateGenreViewModel()
+			{
+				Genres = genres
+			};
+
+			return View(viewModel);
 		}
 
 		[HttpPost]

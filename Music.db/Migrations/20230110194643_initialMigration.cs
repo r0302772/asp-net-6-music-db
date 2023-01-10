@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Music.db.Migrations
 {
-    public partial class createSongArtist : Migration
+    public partial class initialMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -187,11 +187,17 @@ namespace Music.db.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    GenreId = table.Column<int>(type: "int", nullable: false)
+                    GenreId = table.Column<int>(type: "int", nullable: false),
+                    RemixerId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Song", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Song_Artist_RemixerId",
+                        column: x => x.RemixerId,
+                        principalTable: "Artist",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Song_Genre_GenreId",
                         column: x => x.GenreId,
@@ -271,6 +277,11 @@ namespace Music.db.Migrations
                 column: "GenreId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Song_RemixerId",
+                table: "Song",
+                column: "RemixerId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_SongArtist_ArtistId",
                 table: "SongArtist",
                 column: "ArtistId");
@@ -308,10 +319,10 @@ namespace Music.db.Migrations
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "Artist");
+                name: "Song");
 
             migrationBuilder.DropTable(
-                name: "Song");
+                name: "Artist");
 
             migrationBuilder.DropTable(
                 name: "Genre");
